@@ -1,0 +1,140 @@
+/* Main Styling */
+.root {
+    -mainBackgroundColor: #202025;
+
+    -gradientOriginal: linear-gradient(to bottom right, #2b5876, #4e4376);
+    -gradientOriginalHover: linear-gradient(to bottom right, #264f6a, #463c6a);
+    -gradientOriginalSelect: linear-gradient(to bottom right, #1e3d52, #362e52);
+
+    -textColorHeaderOriginal: #202020;
+    -textColorCellOriginal: #505050;
+
+    -textFieldFontColor: DarkGrey;
+    -textFieldPromptFontColor: DimGrey;
+    -textFieldBackgroundColor: #282828;
+    -alertTextColor: #2b5876;
+
+    -menuTextColorOriginal: DimGrey;
+    -menuBackgroundColorPrimary: #1c1c21;
+    -menuBackgroundColorSecondary: #36363a;
+
+    -tableCellColorEven: #38383842;
+    -tableCellColorEvenSelected: #58585887;
+    -tableCellColorOdd: #38383825;
+    -tableCellColorOddSelected: #58585870;
+    -tableCellColorSelected: #202020;
+
+
+}
+/* MAIN BACKGROUND COLOR */
+.mainBackground {
+    -fx-background-color: -mainBackgroundColor;
+}
+
+/* TITLE */
+.inventoryTitle {
+    -fx-text-fill: -gradientOriginal;
+}
+
+/* ADD ITEM BUTTON STYLING */
+#addItemButton {
+    -fx-background-color: -gradientOriginal;
+}
+
+#addItemButton:hover {
+    -fx-background-color: -gradientOriginalHover;
+}
+
+#addItemButton:select {
+    -fx-background-color: -gradientOriginalSelect;
+}
+
+/* TABLE VIEW */
+.table-view, .table-view .corner, .table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background{
+    -fx-background-color: -gradientOriginal;
+    -fx-background-radius: 4px 4px 0px 0px;
+    -fx-background-insets: 0 0 0 0;
+    -fx-padding: 0 0 5px 0;
+}
+
+.table-view .column-header .label{
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 8 0 0 8px;
+    -fx-text-background-color: -textColorHeaderOriginal;
+    -fx-font-size: 14pt ;
+}
+
+.table-view .table-cell{
+    -fx-border-color: transparent;
+    -fx-padding: 2 0 2 10px;
+}
+
+.table-row-cell {
+    -fx-text-background-color: -textColorCellOriginal;
+    -fx-font-size: 14pt;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.table-row-cell: odd{
+    -fx-background-color: -tableCellColorOdd;
+}
+
+.table-row-cell: even{
+    -fx-background-color: -tableCellColorEven;
+}
+
+.table-row-cell: odd: selected {
+    -fx-background-color: -tableCellColorOddSelected;
+}
+
+.table-row-cell: even: selected {
+    -fx-background-color: -tableCellColorEvenSelected;
+}
+
+.table-row-cell: selected {
+    -fx-text-background-color: -tableCellColorSelected;
+}
+
+.numCol {
+  -fx-alignment: CENTER-LEFT;
+}
+
+.menu .label, .itemCount{
+    -fx-text-fill: -menuTextColorOriginal;
+}
+
+.menu:hover, .menu:showing, .menu-item:hover  {
+    -fx-background-color: -menuBackgroundColorSecondary;
+}
+
+.menu {
+    -fx-border-color: -menuBackgroundColorPrimary;
+    -fx-border-width: 0 0 1 0;
+}
+
+.menu-item, .context-menu, .menuBar, .itemCountLabel {
+    -fx-background-color: -menuBackgroundColorPrimary;
+}
+
+.context-menu {
+    -fx-padding:0;
+}
+
+.text-field {
+    -fx-background-color: -textFieldBackgroundColor;
+    -fx-text-fill: -textFieldFontColor;
+    -fx-prompt-text-fill: -textFieldPromptFontColor;
+}
+
+.text-field:focused {
+    -fx-prompt-text-fill: transparent;
+}
+
+.alertMessage {
+    -fx-text-fill: -alertTextColor;
+}
