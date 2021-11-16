@@ -23,7 +23,6 @@ public class Item {
     // used for determining if serial is duplicate
     private static HashMap<String, Boolean> serialMap;
 
-
     private SimpleStringProperty name;
     private SimpleStringProperty serial;
     private SimpleDoubleProperty value;
@@ -72,29 +71,35 @@ public class Item {
         // set the value
     }
 
-    private boolean isNameValid(String name) {
+    public boolean isNameValid(String name) {
         // return whether the name is 2-256 characters (inclusive)
         return false;
     }
 
-    private boolean isSerialValid(String serial) {
+    public boolean isSerialValid(String serial) {
         // return whether the serial is in the format A-XXX-XXX-XXX
         // where A is a letter, and X is a letter or digit
         return false;
     }
 
-    private boolean isSerialDuplicate(String serial) {
+    public boolean isSerialDuplicate(String serial) {
         // return whether the serial is a duplicate (from map)
         return false;
     }
 
-    private boolean isValueValid(double value) {
+    public boolean isValueValid(double value) {
         // return whether the value is >= 0
         return false;
     }
 
-    public String toStringTSV(){
+    public String toStringTSV() {
         // return the item String in the format we will use for TSV file saving
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        // override the default method to include a toString that we could use
         return null;
     }
 }

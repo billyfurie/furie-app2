@@ -1,0 +1,119 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class FileManager {
+    +void saveInventoryToTSV(Inventory inventory, File file) throws IOException
+    +Inventory loadInventoryFromTSV(File file) throws InvalidParameterException
+    +void saveInventoryToJSON(Inventory inventory, File file) throws IOException
+    +Inventory loadInventoryFromJSON(File file) throws InvalidParameterException
+    +void saveInventoryToHTML(Inventory inventory, File file) throws IOException
+    +Inventory loadInventoryFromHTML(File file) throws InvalidParameterException
+}
+
+class FXMLController {
+    -TableView<Item> table
+    -TableColumn<Item, String> nameCol
+    -TableColumn<Item, String> idCol
+    -TableColumn<Item, String> valueCol
+
+    -Button addItemButton
+
+    -TextField searchField
+
+    -MenuItem createInventoryMenuItem
+    -MenuItem saveInventoryMenuItem
+    -MenuItem loadInventoryMenuItem
+
+    -MenuItem removeSelectedMenuItem
+    -MenuItem removeAllMenuItem
+
+    -ObservableList<Item> data
+    -Inventory inventory
+
+    +void initialize(URL location, ResourceBundle resources)
+    +void addItem()
+    +void clearTextField(TextField field)
+    +void removeSelectedItems()
+    +void removeAllItems()
+    +void displayAlertMessage(String message)
+    +void initializeSearch()
+    +void createNewInventory()
+    +void saveInventory()
+    +void loadInventory()
+}
+
+class InventoryManagementApplication {
+    +void start(Stage stage) throws Exception
+    +static void main(String[] args)
+}
+
+class DuplicateSerialException {
+
+}
+
+class InvalidNameException {
+
+}
+
+class InvalidSerialException {
+
+}
+
+class InvalidValueException {
+
+}
+
+class InventoryFullException {
+
+}
+
+class Inventory {
+    -static final int CAPACITY_INCLUSIVE = 1024
+    -ObservableList<Item> inventory
+    +Inventory()
+    +void addItem(String name, String serial, double value) throws InvalidParameterException
+    +void addItem(Item item) throws InvalidParameterException
+    +void removeItem(Item item)
+    +void removeItem(ObservableList<Item> items)
+    +void removeAllItems()
+    +ObservableList<Item> getInventory()
+}
+
+class Item {
+    -static final int MIN_CHAR_COUNT_NAME = 2
+    -static final int MAX_CHAR_COUNT_NAME = 256
+    -static final String SERIAL_FORMAT = "A-XXX-XXX-XXX"
+    -static HashMap<String, Boolean> serialMap
+    -SimpleStringProperty name
+    -SimpleStringProperty serial
+    -SimpleDoubleProperty value
+    -Item(String name, String serial, double value) throws InvalidParameterException
+    +String getName()
+    +String getSerial()
+    +double getValue()
+    +String getValueString()
+    +void setName(String name) throws InvalidNameException
+    +void setSerial(String serial) throws InvalidParameterException
+    +void setValue(double value) throws InvalidValueException
+    +boolean isNameValid(String name)
+    +boolean isSerialValid(String serial)
+    +boolean isSerialDuplicate(String serial)
+    +boolean isValueValid(double value)
+    +String toStringTSV()
+    +String toString()
+}
+
+FXMLController *-- Inventory: contains 1
+FXMLController .. FileManager: uses
+InventoryManagementApplication .. FXMLController
+Inventory *-- Item: contains ObservableList of
+
+
+Item .. DuplicateSerialException: throws
+Item .. InvalidNameException: throws
+Item .. InvalidSerialException: throws
+Item .. InvalidValueException: throws
+Inventory .. InventoryFullException: throws
+
+
+@enduml

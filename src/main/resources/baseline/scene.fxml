@@ -25,22 +25,15 @@
                     <menus>
                         <Menu mnemonicParsing="false" styleClass="menuBarItem" text="File">
                             <items>
-                                <MenuItem mnemonicParsing="false" text="Create New Inventory" />
-                                <MenuItem mnemonicParsing="false" text="Save Inventory" />
-                                <MenuItem mnemonicParsing="false" text="Load Inventory" />
-                            </items>
-                        </Menu>
-                        <Menu mnemonicParsing="false" styleClass="menuBarItem" text="Sort">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="By Name" />
-                                <MenuItem mnemonicParsing="false" text="By Serial Number" />
-                                <MenuItem mnemonicParsing="false" text="By Value" />
+                                <MenuItem fx:id="createInventoryMenuItem" mnemonicParsing="false" text="Create New Inventory" />
+                                <MenuItem fx:id="saveInventoryMenuItem" mnemonicParsing="false" text="Save Inventory" />
+                                <MenuItem fx:id="loadInventoryMenuItem" mnemonicParsing="false" text="Load Inventory" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" styleClass="menuBarItem" text="Items">
                             <items>
-                                <MenuItem mnemonicParsing="false" text="Remove Selected" />
-                                <MenuItem mnemonicParsing="false" text="Remove All" />
+                                <MenuItem fx:id="removeSelectedMenuItem" mnemonicParsing="false" text="Remove Selected" />
+                                <MenuItem fx:id="removeAllMenuItem" mnemonicParsing="false" text="Remove All" />
                             </items>
                         </Menu>
                     </menus>
@@ -104,7 +97,7 @@
                                         <Insets bottom="8.0" />
                                     </VBox.margin>
                                 </HBox>
-                                <Button id="addItemButton" fx:id="button" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" prefHeight="38.0" stylesheets="@styles.css" text="Add Item" VBox.vgrow="ALWAYS">
+                                <Button id="addItemButton" fx:id="addItemButton" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" prefHeight="38.0" stylesheets="@styles.css" text="Add Item" VBox.vgrow="ALWAYS">
                                     <font>
                                         <Font name="System Bold" size="17.0" />
                                     </font>

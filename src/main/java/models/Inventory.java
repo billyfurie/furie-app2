@@ -22,7 +22,14 @@ public class Inventory {
     public void addItem(String name, String serial, double value) throws InvalidParameterException {
         // try to create the item with these parameters
         // if invalid, throw the exception
-        // else add item to our observable list
+        // if full, throw the exception
+        // add item to our observable list
+    }
+
+    public void addItem(Item item) throws InvalidParameterException {
+        // try to add the already-created item
+        // if full, throw the exception
+        // add item to our observable list
     }
 
     public void removeItem(Item item) {

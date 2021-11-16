@@ -7,10 +7,39 @@ package baseline;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import models.Inventory;
+import models.Item;
 
 public class FXMLController implements Initializable {
+
+
+    @FXML private TableView<Item> table;
+
+    @FXML private TableColumn<Item, String> nameCol;
+    @FXML private TableColumn<Item, String> idCol;
+    @FXML private TableColumn<Item, String> valueCol;
+
+    @FXML private Button addItemButton;
+
+    @FXML private TextField searchField;
+
+    // File menu tabs
+    @FXML private MenuItem createInventoryMenuItem;
+    @FXML private MenuItem saveInventoryMenuItem;
+    @FXML private MenuItem loadInventoryMenuItem;
+
+    // Items menu tabs
+    @FXML private MenuItem removeSelectedMenuItem;
+    @FXML private MenuItem removeAllMenuItem;
+
+    private ObservableList<Item> data;
+
+    private Inventory inventory = new Inventory();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -18,7 +47,8 @@ public class FXMLController implements Initializable {
         // initialize columns in the tableview
         // initialize cell factories
         // initialize the search feature
-        // initialize editing of the item
+        // initialize editing of the item (add error message responses)
+        // bind counter to size of observable list
     }
 
     public void addItem() {
@@ -29,24 +59,36 @@ public class FXMLController implements Initializable {
         // if invalid display error message saying what went wrong
     }
 
-    private void clearTextField(TextField field) {
+    public void clearTextField(TextField field) {
         // helper function to clear the contents in a field
     }
 
-    private void removeItems() {
+    public void removeSelectedItems() {
         // go through and look which items are selected, remove those
     }
 
-    private void removeAllItems() {
+    public void removeAllItems() {
         // removes all the items; clears inventory
     }
 
-    private void displayAlertMessage(String message) {
+    public void displayAlertMessage(String message) {
         // this will display any alert messages / error messages in the alert space
     }
 
-    private void initializeSearch() {
+    public void initializeSearch() {
         // this will initialize our search method, useful for initial load of list
+    }
+
+    public void createNewInventory() {
+        // create a new inventory and make it the active one
+    }
+
+    public void saveInventory() {
+        // save the current inventory using a FileChooser and our FileManager
+    }
+
+    public void loadInventory() {
+        // load an inventory using a FileChooser and our FileManager
     }
 }
 
