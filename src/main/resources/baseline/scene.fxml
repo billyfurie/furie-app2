@@ -66,7 +66,7 @@
                                 <Insets left="8.0" right="8.0" top="8.0" />
                             </VBox.margin>
                             <children>
-                                <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="38.0" promptText="Enter the name...">
+                                <TextField fx:id="enterNameField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="38.0" promptText="Enter the name...">
                                     <font>
                                         <Font name="System Italic" size="14.0" />
                                     </font>
@@ -76,7 +76,7 @@
                                 </TextField>
                                 <HBox maxWidth="1.7976931348623157E308">
                                     <children>
-                                        <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="38.0" promptText="Enter the ID..." HBox.hgrow="ALWAYS">
+                                        <TextField fx:id="enterSerialField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="38.0" promptText="Enter the serial number..." HBox.hgrow="ALWAYS">
                                             <font>
                                                 <Font name="System Italic" size="14.0" />
                                             </font>
@@ -84,7 +84,7 @@
                                                 <Insets right="8.0" />
                                             </HBox.margin>
                                         </TextField>
-                                        <TextField layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="38.0" promptText="Enter the value..." HBox.hgrow="ALWAYS">
+                                        <TextField fx:id="enterValueField" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="38.0" promptText="Enter the value..." HBox.hgrow="ALWAYS">
                                             <font>
                                                 <Font name="System Italic" size="14.0" />
                                             </font>
@@ -97,7 +97,7 @@
                                         <Insets bottom="8.0" />
                                     </VBox.margin>
                                 </HBox>
-                                <Button id="addItemButton" fx:id="addItemButton" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" prefHeight="38.0" stylesheets="@styles.css" text="Add Item" VBox.vgrow="ALWAYS">
+                                <Button id="addItemButton" fx:id="addItemButton" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#addItem" prefHeight="38.0" stylesheets="@styles.css" text="Add Item" VBox.vgrow="ALWAYS">
                                     <font>
                                         <Font name="System Bold" size="17.0" />
                                     </font>
@@ -110,7 +110,7 @@
                     <children>
                         <HBox alignment="CENTER">
                             <children>
-                                <Label styleClass="alertMessage" stylesheets="@styles.css" text="ERROR MESSAGE" textFill="WHITE">
+                                <Label fx:id="alertMessageLabel" styleClass="alertMessage" stylesheets="@styles.css" text="ERROR MESSAGE" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="14.0" />
                                     </font>
@@ -143,10 +143,10 @@
                                 </TextField>
                             </children>
                         </HBox>
-                        <TableView fx:id="table" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="table" editable="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="nameCol" minWidth="305.0" prefWidth="-1.0" text="Name" />
-                                <TableColumn fx:id="idCol" maxWidth="150.0" minWidth="150.0" prefWidth="-1.0" styleClass="numCol" text="Serial #" />
+                                <TableColumn fx:id="serialCol" maxWidth="150.0" minWidth="150.0" prefWidth="-1.0" styleClass="numCol" text="Serial #" />
                                 <TableColumn fx:id="valueCol" maxWidth="150.0" minWidth="108.0" prefWidth="-1.0" styleClass="numCol" text="Value" />
                             </columns>
                             <VBox.margin>
