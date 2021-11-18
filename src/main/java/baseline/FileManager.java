@@ -5,6 +5,7 @@
 
 package baseline;
 
+import javafx.stage.FileChooser;
 import models.Inventory;
 
 import java.io.File;
@@ -12,6 +13,11 @@ import java.io.IOException;
 import java.security.InvalidParameterException;
 
 public class FileManager {
+
+    // extensions we support
+    public static final FileChooser.ExtensionFilter TSV = new FileChooser.ExtensionFilter("TSV", "*.txt");
+    public static final FileChooser.ExtensionFilter HTML = new FileChooser.ExtensionFilter("HTML", "*.html");
+    public static final FileChooser.ExtensionFilter JSON = new FileChooser.ExtensionFilter("JSON", "*.json");
 
     public void saveInventoryToTSV(Inventory inventory, File file) throws IOException {
         // get the observable list

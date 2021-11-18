@@ -54,6 +54,13 @@
     -fx-background-color: transparent;
 }
 
+/* Table View */
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent;
+    -fx-border-insets: 10
+}
+
+
 .table-view .column-header-background{
     -fx-background-color: -gradientOriginal;
     -fx-background-radius: 4px 4px 0px 0px;
@@ -137,4 +144,40 @@
 
 .alertMessage {
     -fx-text-fill: -alertTextColor;
+}
+
+/* scroll */
+
+/* hide buttons */
+.scroll-bar .increment-button,
+.scroll-bar .increment-button .increment-arrow,
+.scroll-bar .decrement-button,
+.scroll-bar .decrement-button .decrement-arrow
+{
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color :transparent;
+    -fx-pref-width: 14;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color : linear-gradient(to top, #2b5876, #4e4376);
+}
+
+.increment-button, .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar:horizontal {
+    -fx-background-color :transparent;
+    -fx-pref-width: 0;
+}
+.scroll-bar:horizontal .thumb {
+    -fx-background-color : transparent;
 }

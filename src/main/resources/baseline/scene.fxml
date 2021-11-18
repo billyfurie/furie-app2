@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="mainBackground" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="baseline.FXMLController">
+<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="mainBackground" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="baseline.FXMLController">
     <top>
         <HBox BorderPane.alignment="CENTER">
             <children>
@@ -26,14 +26,14 @@
                         <Menu mnemonicParsing="false" styleClass="menuBarItem" text="File">
                             <items>
                                 <MenuItem fx:id="createInventoryMenuItem" mnemonicParsing="false" text="Create New Inventory" />
-                                <MenuItem fx:id="saveInventoryMenuItem" mnemonicParsing="false" text="Save Inventory" />
+                                <MenuItem fx:id="saveInventoryMenuItem" mnemonicParsing="false" onAction="#saveInventory" text="Save Inventory" />
                                 <MenuItem fx:id="loadInventoryMenuItem" mnemonicParsing="false" text="Load Inventory" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" styleClass="menuBarItem" text="Items">
                             <items>
-                                <MenuItem fx:id="removeSelectedMenuItem" mnemonicParsing="false" text="Remove Selected" />
-                                <MenuItem fx:id="removeAllMenuItem" mnemonicParsing="false" text="Remove All" />
+                                <MenuItem fx:id="removeSelectedMenuItem" mnemonicParsing="false" onAction="#removeSelectedItems" text="Remove Selected" />
+                                <MenuItem fx:id="removeAllMenuItem" mnemonicParsing="false" onAction="#removeAllItems" text="Remove All" />
                             </items>
                         </Menu>
                     </menus>
@@ -110,7 +110,7 @@
                     <children>
                         <HBox alignment="CENTER">
                             <children>
-                                <Label fx:id="alertMessageLabel" styleClass="alertMessage" stylesheets="@styles.css" text="ERROR MESSAGE" textFill="WHITE">
+                                <Label fx:id="alertMessageLabel" styleClass="alertMessage" stylesheets="@styles.css" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="14.0" />
                                     </font>
@@ -145,9 +145,9 @@
                         </HBox>
                         <TableView fx:id="table" editable="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="nameCol" minWidth="305.0" prefWidth="-1.0" text="Name" />
-                                <TableColumn fx:id="serialCol" maxWidth="150.0" minWidth="150.0" prefWidth="-1.0" styleClass="numCol" text="Serial #" />
-                                <TableColumn fx:id="valueCol" maxWidth="150.0" minWidth="108.0" prefWidth="-1.0" styleClass="numCol" text="Value" />
+                                <TableColumn fx:id="nameCol" minWidth="256.0" prefWidth="-1.0" text="Name" />
+                                <TableColumn fx:id="serialCol" maxWidth="312.0" minWidth="196.0" prefWidth="-1.0" styleClass="numCol" text="Serial #" />
+                                <TableColumn fx:id="valueCol" maxWidth="196.0" minWidth="108.0" prefWidth="-1.0" styleClass="numCol" text="Value" />
                             </columns>
                             <VBox.margin>
                                 <Insets left="8.0" right="8.0" />

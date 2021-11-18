@@ -13,9 +13,8 @@ import java.security.InvalidParameterException;
 
 public class Inventory {
 
-    private static final int CAPACITY_INCLUSIVE = 1024;
+    public static final int CAPACITY_INCLUSIVE = 1024;
     private static final String INVENTORY_FULL_MESSAGE = "Error: the inventory is full at 1024 items.";
-
 
     private final ObservableList<Item> inventoryList;
 
@@ -30,7 +29,7 @@ public class Inventory {
         Item item = new Item(name, serial, value);
         // if invalid, throw the exception
         // handled automatically ^
-        System.out.println("here");
+
         // add item to our observable list
         // if full, throw the exception
 
@@ -54,16 +53,29 @@ public class Inventory {
     }
 
     public void removeItem(Item item) {
+        // remove the serial
+        item.removeSerial(item.getSerial());
+
         // remove the item from the observable list
         inventoryList.remove(item);
     }
 
     public void removeItem(ObservableList<Item> items) {
+        // remove all the serials
+        for (Item item : items) {
+            item.removeSerial(item.getSerial());
+        }
+
         // remove all the specified items
         inventoryList.removeAll(items);
     }
 
     public void removeAllItems() {
+        // remove all the serials
+        for (Item item : inventoryList) {
+            item.removeSerial(item.getSerial());
+        }
+
         // remove all the items in the list
         // clearing inventory
         inventoryList.clear();
@@ -72,5 +84,9 @@ public class Inventory {
     public ObservableList<Item> getInventoryList() {
         // return the inventory observable list
         return inventoryList;
+    }
+
+    public String getCounterString() {
+        return inventoryList.size() + "/" + CAPACITY_INCLUSIVE;
     }
 }

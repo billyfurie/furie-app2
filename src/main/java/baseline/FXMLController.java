@@ -5,17 +5,28 @@
 
 package baseline;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.security.InvalidParameterException;
 import java.util.ResourceBundle;
 
 import exceptions.InvalidNameException;
+import javafx.animation.PauseTransition;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
+import javafx.util.Duration;
 import models.Inventory;
 import models.Item;
 
@@ -24,11 +35,11 @@ public class FXMLController implements Initializable {
 
     @FXML private TableView<Item> table;
 
+    @FXML private BorderPane mainPane;
+
     @FXML private TableColumn<Item, String> nameCol;
     @FXML private TableColumn<Item, String> serialCol;
     @FXML private TableColumn<Item, String> valueCol;
-
-    @FXML private Button addItemButton;
 
     @FXML private TextField searchField;
 
@@ -37,15 +48,8 @@ public class FXMLController implements Initializable {
     @FXML private TextField enterValueField;
 
     @FXML private Label alertMessageLabel;
+    @FXML private Label itemCountLabel;
 
-    // File menu tabs
-    @FXML private MenuItem createInventoryMenuItem;
-    @FXML private MenuItem saveInventoryMenuItem;
-    @FXML private MenuItem loadInventoryMenuItem;
-
-    // Items menu tabs
-    @FXML private MenuItem removeSelectedMenuItem;
-    @FXML private MenuItem removeAllMenuItem;
 
     private ObservableList<Item> data;
 
@@ -58,22 +62,35 @@ public class FXMLController implements Initializable {
         // initialize columns in the tableview
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         serialCol.setCellValueFactory(new PropertyValueFactory<>("serial"));
-        valueCol.setCellValueFactory(new PropertyValueFactory<>("value"));
+        valueCol.setCellValueFactory(new PropertyValueFactory<>("valueFormatted")); // gets $ formatted
 
         // initialize cell factories
         nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
         serialCol.setCellFactory(TextFieldTableCell.forTableColumn());
         valueCol.setCellFactory(TextFieldTableCell.forTableColumn());
 
-
         // initialize editing
         initializeEditing();
         // initialize the search feature
         // bind counter to size of observable list
 
-        data = inventory.getInventoryList();
-        table.setItems(data);
+        setActiveInventory(inventory);
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        initializeSearch();
+        initializeMainPane();
+        initializeEditorFields();
+
+        // set the comparator for the value sort
+        // since we treat the values as strings
+        valueCol.setComparator((o1, o2) -> {
+            // get rid of the $ , .
+            o1 = o1.replaceAll("[,$]","");
+            o2 = o2.replaceAll("[,$]","");
+
+            // compare using big integer
+            return new BigDecimal(o1).compareTo(new BigDecimal(o2));
+        });
     }
 
     public void addItem() {
@@ -92,6 +109,9 @@ public class FXMLController implements Initializable {
             // otherwise leave it since the user will probably want to edit some info
 
             clearTextFields(enterNameField, enterSerialField, enterValueField);
+
+            // update our counter
+            updateCounter();
         } catch (InvalidParameterException e) {
             // if invalid display error message saying what went wrong
             displayAlertMessage(e.getMessage());
@@ -100,7 +120,6 @@ public class FXMLController implements Initializable {
 
     public void clearTextFields(TextField... fields) {
         // helper function to clear the contents in a field
-
         for (TextField field : fields) {
             field.clear();
         }
@@ -108,10 +127,18 @@ public class FXMLController implements Initializable {
 
     public void removeSelectedItems() {
         // go through and look which items are selected, remove those
+        // update our counter
+        inventory.removeItem(table.getSelectionModel().getSelectedItems());
+        updateCounter();
+
+        setActiveInventory(new Inventory());
     }
 
     public void removeAllItems() {
         // removes all the items; clears inventory
+        // update our counter
+        inventory.removeAllItems();
+        updateCounter();
     }
 
     public void displayAlertMessage(String message) {
@@ -120,22 +147,122 @@ public class FXMLController implements Initializable {
         if (message != null) {
             alertMessageLabel.setText(message);
         }
+
+        // displays the message for 3 seconds
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        pause.setOnFinished(e -> alertMessageLabel.setText(null));
+        pause.play();
     }
 
     public void initializeSearch() {
         // this will initialize our search method, useful for initial load of list
+        // display all the data in the original filtered data
+        // found in tutorial
+
+        FilteredList<Item> filteredData = new FilteredList<>(data, b -> true);
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) ->
+                filteredData.setPredicate(item -> {
+
+            // If filter text is empty, display all items.
+            if (newValue == null || newValue.isEmpty()) {
+                return true;
+            }
+
+            String lowerCaseFilter = newValue.toLowerCase();
+
+            // Does not match.
+            if (item.getName().toLowerCase().contains(lowerCaseFilter)) {
+                return true; // Filter matches name.
+            }
+            else return item.getSerial().toLowerCase().contains(lowerCaseFilter);
+        }));
+
+        // Wrap the FilteredList in a SortedList.
+        SortedList<Item> sortedData = new SortedList<>(filteredData);
+
+        // Bind the SortedList comparator to the TableView comparator.
+        // Otherwise, sorting the TableView would have no effect.
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+
+        // Add sorted (and filtered) data to the table.
+        table.setItems(sortedData);
     }
 
     public void createNewInventory() {
         // create a new inventory and make it the active one
+        // update our counter
+        updateCounter();
     }
 
     public void saveInventory() {
         // save the current inventory using a FileChooser and our FileManager
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save");
+        FileManager manager = new FileManager();
+
+        // add supported file types
+        fileChooser.getExtensionFilters().addAll(FileManager.TSV, FileManager.HTML, FileManager.JSON);
+
+        File selected = fileChooser.showSaveDialog(null);
+
+        // handles exceptions
+        // see which file type the user selected
+        if (selected != null) {
+            if (fileChooser.getSelectedExtensionFilter().equals(FileManager.TSV)) {
+                try {
+                    manager.saveInventoryToTSV(inventory, selected);
+                } catch (IOException e) {
+                    displayAlertMessage("Unable to save inventory to TSV.");
+                }
+            } else if (fileChooser.getSelectedExtensionFilter().equals(FileManager.HTML)) {
+                try {
+                    manager.saveInventoryToHTML(inventory, selected);
+                } catch (IOException e) {
+                    displayAlertMessage("Unable to save inventory to HTML.");
+                }
+            } else if (fileChooser.getSelectedExtensionFilter().equals(FileManager.JSON)) {
+                try {
+                    manager.saveInventoryToJSON(inventory, selected);
+                } catch (IOException e) {
+                    displayAlertMessage("Unable to save inventory to JSON.");
+                }
+            }
+        }
     }
 
     public void loadInventory() {
-        // load an inventory using a FileChooser and our FileManager
+        // load the current inventory using a FileChooser and our FileManager
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load");
+        FileManager manager = new FileManager();
+
+        // add supported file types
+        fileChooser.getExtensionFilters().addAll(FileManager.TSV, FileManager.HTML, FileManager.JSON);
+
+        File selected = fileChooser.showOpenDialog(null);
+
+
+        // handles exceptions
+        // see which file type the user selected
+        if (selected != null) {
+            if (fileChooser.getSelectedExtensionFilter().equals(FileManager.TSV)) {
+                // load from tsv
+                setActiveInventory(manager.loadInventoryFromTSV(selected));
+
+            } else if (fileChooser.getSelectedExtensionFilter().equals(FileManager.HTML)) {
+                // load from html
+                setActiveInventory(manager.loadInventoryFromHTML(selected));
+
+            } else if (fileChooser.getSelectedExtensionFilter().equals(FileManager.JSON)) {
+                // load from json
+                setActiveInventory(manager.loadInventoryFromJSON(selected));
+            }
+        }
+
+        // update our counter
+        updateCounter();
     }
 
     private void initializeEditing() {
@@ -155,6 +282,15 @@ public class FXMLController implements Initializable {
             }
         });
 
+        // displays text at full length
+        nameCol.setOnEditCancel(event -> {
+            Item item = event.getRowValue();
+
+            if (item != null) {
+                displayAlertMessage(item.getName());
+            }
+        });
+
         // initialize editing of the item serial
         serialCol.setOnEditCommit(event -> {
             try {
@@ -171,6 +307,16 @@ public class FXMLController implements Initializable {
             }
         });
 
+        // displays text at full length
+        serialCol.setOnEditCancel(event -> {
+            Item item = event.getRowValue();
+
+            if (item != null) {
+                displayAlertMessage(item.getSerial());
+            }
+        });
+
+
         // initialize editing of the item value
         valueCol.setOnEditCommit(event -> {
             try {
@@ -186,6 +332,46 @@ public class FXMLController implements Initializable {
                 table.refresh();
             }
         });
+
+        // displays text at full length
+        valueCol.setOnEditCancel(event -> {
+            Item item = event.getRowValue();
+
+            if (item != null) {
+                displayAlertMessage(item.getValueFormatted());
+            }
+        });
     }
+
+    private void initializeMainPane() {
+        // this is so that when the user clicks anywhere, it will de-focus from the text fields
+        mainPane.setOnMouseClicked(event -> mainPane.requestFocus());
+    }
+
+    private void initializeEditorFields() {
+        // when user presses enter, item will attempt to be created
+        enterNameField.setOnAction(event -> addItem());
+        enterSerialField.setOnAction(event -> addItem());
+
+        // when user presses enter at last field, item will be created, then go back to first field
+        // this allows for quicker creation of items
+        enterValueField.setOnAction(event -> {
+            addItem();
+            enterNameField.requestFocus();
+        });
+    }
+
+    private void updateCounter() {
+        itemCountLabel.setText(inventory.getCounterString());
+    }
+
+    private void setActiveInventory(Inventory inventory) {
+        this.inventory.removeAllItems();
+        this.inventory = inventory;
+        data = inventory.getInventoryList();
+        table.setItems(data);
+    }
+
+
 }
 

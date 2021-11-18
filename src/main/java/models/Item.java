@@ -38,7 +38,9 @@ public class Item {
 
     private SimpleStringProperty name;
     private SimpleStringProperty serial;
-    private SimpleStringProperty value;
+    private SimpleDoubleProperty value;
+    private SimpleStringProperty valueFormatted;
+
 
     public Item(String name, String serial, String value) throws InvalidParameterException {
         // initialize the variables
@@ -62,7 +64,7 @@ public class Item {
         return serial.getValue();
     }
 
-    public String getValue() {
+    public double getValue() {
         // return the value
         return value.getValue();
     }
@@ -93,10 +95,8 @@ public class Item {
 
         // check if valid, else throw exception
         if (!isSerialValid(serial)) {
-            System.out.println("1");
             throw new InvalidSerialException(INVALID_SERIAL_MESSAGE);
         } else if (isSerialDuplicate(serial)) {
-            System.out.println("2");
             throw new DuplicateSerialException(DUPLICATE_SERIAL_MESSAGE);
         }
 
@@ -109,7 +109,6 @@ public class Item {
             serialMap.put(serial, true);
             // make sure this is no longer the initial serialization
             initialSerialization = false;
-            System.out.println("erer");
 
             return;
         }
@@ -130,6 +129,12 @@ public class Item {
         this.serial = new SimpleStringProperty(serial);
     }
 
+    public void removeSerial(String ... serials) {
+        for (String serial : serials) {
+            serialMap.put(serial, false);
+        }
+    }
+
     public void setValue(String value) throws InvalidValueException {
         // check that it is in double format
         double val;
@@ -146,7 +151,8 @@ public class Item {
         }
 
         // set the value
-        this.value = new SimpleStringProperty(value);
+        this.value = new SimpleDoubleProperty(val);
+        this.valueFormatted = new SimpleStringProperty(getValueFormatted());
     }
 
     public boolean isNameValid(String name) {
@@ -173,7 +179,8 @@ public class Item {
 
     public String toStringTSV() {
         // return the item String in the format we will use for TSV file saving
-        return null;
+
+        return String.format("%s\t%s\t%s%n", serial, name, value);
     }
 
     @Override
