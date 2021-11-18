@@ -249,7 +249,11 @@ public class FXMLController implements Initializable {
         if (selected != null) {
             if (fileChooser.getSelectedExtensionFilter().equals(FileManager.TSV)) {
                 // load from tsv
-                setActiveInventory(manager.loadInventoryFromTSV(selected));
+                try {
+                    setActiveInventory(manager.loadInventoryFromTSV(selected));
+                } catch (FileNotFoundException e) {
+                    displayAlertMessage("Unable to load from TSV file.");
+                }
 
             } else if (fileChooser.getSelectedExtensionFilter().equals(FileManager.HTML)) {
                 // load from html

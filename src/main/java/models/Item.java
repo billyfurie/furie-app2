@@ -180,7 +180,7 @@ public class Item {
     public String toStringTSV() {
         // return the item String in the format we will use for TSV file saving
 
-        return String.format("%s\t%s\t%s%n", serial, name, value);
+        return String.format("%s\t%s\t%s%n", serial.getValue(), name.getValue(), valueFormatted.getValue());
     }
 
     @Override

@@ -27,7 +27,7 @@
                             <items>
                                 <MenuItem fx:id="createInventoryMenuItem" mnemonicParsing="false" text="Create New Inventory" />
                                 <MenuItem fx:id="saveInventoryMenuItem" mnemonicParsing="false" onAction="#saveInventory" text="Save Inventory" />
-                                <MenuItem fx:id="loadInventoryMenuItem" mnemonicParsing="false" text="Load Inventory" />
+                                <MenuItem fx:id="loadInventoryMenuItem" mnemonicParsing="false" onAction="#loadInventory" text="Load Inventory" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" styleClass="menuBarItem" text="Items">

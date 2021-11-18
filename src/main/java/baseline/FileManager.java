@@ -7,10 +7,13 @@ package baseline;
 
 import javafx.stage.FileChooser;
 import models.Inventory;
+import models.Item;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.InvalidParameterException;
+import java.util.Scanner;
 
 public class FileManager {
 
@@ -20,19 +23,48 @@ public class FileManager {
     public static final FileChooser.ExtensionFilter JSON = new FileChooser.ExtensionFilter("JSON", "*.json");
 
     public void saveInventoryToTSV(Inventory inventory, File file) throws IOException {
+        StringBuilder fileBuilder = new StringBuilder();
+
+        // add the header row
+        fileBuilder.append("Serial Number\tName\tValue\n");
+
         // get the observable list
         // for each of the items, format a line with
         // A-XXX-XXX-XXX    Xbox    $1499.00
-        // write to the file
+        for (Item item : inventory.getInventoryList()) {
+            fileBuilder.append(item.toStringTSV());
+        }
+        Path p = file.toPath();
+
+        try {
+            Files.writeString(p, fileBuilder.toString());
+        } catch (Exception e) {
+            throw new IOException();
+        }
     }
 
-    public Inventory loadInventoryFromTSV(File file) throws InvalidParameterException {
+    public Inventory loadInventoryFromTSV(File file) throws InvalidParameterException, FileNotFoundException {
         // takes in the file
         // if invalid, throw exception
-        // parses file, examining the items in the line
-        // create and build the inventory using these items
+
+        Inventory inventory;
+        try (Scanner input = new Scanner(file)) {
+            inventory = new Inventory();
+            input.useDelimiter("[\t\n]");
+            input.nextLine();
+
+            // parses file, examining the items in the line
+            while (input.hasNextLine()) {
+                // create and build the inventory using these items
+                String serial = input.nextLine();
+                String[] parameters = serial.split("\t");
+
+                inventory.addItem(new Item(parameters[1], parameters[0], parameters[2].replaceAll("[,$]", "")));
+            }
+        }
+
         // return the inventory
-        return null;
+        return inventory;
     }
 
     public void saveInventoryToJSON(Inventory inventory, File file) throws IOException {
