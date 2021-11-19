@@ -130,8 +130,8 @@ public class Item {
     }
 
     public void removeSerial(String ... serials) {
-        for (String serial : serials) {
-            serialMap.put(serial, false);
+        for (String s : serials) {
+            serialMap.put(s, false);
         }
     }
 
@@ -140,7 +140,7 @@ public class Item {
         double val;
 
         try {
-            val = Double.parseDouble(value);
+            val = Double.parseDouble(value.replaceAll("[,$]",""));
         } catch (NullPointerException | NumberFormatException e) {
             throw new InvalidValueException(INVALID_VALUE_MESSAGE);
         }

@@ -25,7 +25,7 @@
                     <menus>
                         <Menu mnemonicParsing="false" styleClass="menuBarItem" text="File">
                             <items>
-                                <MenuItem fx:id="createInventoryMenuItem" mnemonicParsing="false" text="Create New Inventory" />
+                                <MenuItem fx:id="createInventoryMenuItem" mnemonicParsing="false" onAction="#createNewInventory" text="Create New Inventory" />
                                 <MenuItem fx:id="saveInventoryMenuItem" mnemonicParsing="false" onAction="#saveInventory" text="Save Inventory" />
                                 <MenuItem fx:id="loadInventoryMenuItem" mnemonicParsing="false" onAction="#loadInventory" text="Load Inventory" />
                             </items>
@@ -84,7 +84,7 @@
                                                 <Insets right="8.0" />
                                             </HBox.margin>
                                         </TextField>
-                                        <TextField fx:id="enterValueField" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="38.0" promptText="Enter the value..." HBox.hgrow="ALWAYS">
+                                        <TextField fx:id="enterValueField" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="38.0" prefWidth="228.0" promptText="Enter the value..." HBox.hgrow="ALWAYS">
                                             <font>
                                                 <Font name="System Italic" size="14.0" />
                                             </font>

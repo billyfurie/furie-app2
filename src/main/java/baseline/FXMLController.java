@@ -6,10 +6,8 @@
 package baseline;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.URL;
 import java.security.InvalidParameterException;
 import java.util.ResourceBundle;
@@ -130,8 +128,6 @@ public class FXMLController implements Initializable {
         // update our counter
         inventory.removeItem(table.getSelectionModel().getSelectedItems());
         updateCounter();
-
-        setActiveInventory(new Inventory());
     }
 
     public void removeAllItems() {
@@ -154,43 +150,10 @@ public class FXMLController implements Initializable {
         pause.play();
     }
 
-    public void initializeSearch() {
-        // this will initialize our search method, useful for initial load of list
-        // display all the data in the original filtered data
-        // found in tutorial
-
-        FilteredList<Item> filteredData = new FilteredList<>(data, b -> true);
-
-        searchField.textProperty().addListener((observable, oldValue, newValue) ->
-                filteredData.setPredicate(item -> {
-
-            // If filter text is empty, display all items.
-            if (newValue == null || newValue.isEmpty()) {
-                return true;
-            }
-
-            String lowerCaseFilter = newValue.toLowerCase();
-
-            // Does not match.
-            if (item.getName().toLowerCase().contains(lowerCaseFilter)) {
-                return true; // Filter matches name.
-            }
-            else return item.getSerial().toLowerCase().contains(lowerCaseFilter);
-        }));
-
-        // Wrap the FilteredList in a SortedList.
-        SortedList<Item> sortedData = new SortedList<>(filteredData);
-
-        // Bind the SortedList comparator to the TableView comparator.
-        // Otherwise, sorting the TableView would have no effect.
-        sortedData.comparatorProperty().bind(table.comparatorProperty());
-
-        // Add sorted (and filtered) data to the table.
-        table.setItems(sortedData);
-    }
-
     public void createNewInventory() {
         // create a new inventory and make it the active one
+        inventory.removeAllItems();
+        inventory = new Inventory();
         // update our counter
         updateCounter();
     }
@@ -247,12 +210,16 @@ public class FXMLController implements Initializable {
         // handles exceptions
         // see which file type the user selected
         if (selected != null) {
+
+            // clear current inventory
+            inventory.removeAllItems();
+
             if (fileChooser.getSelectedExtensionFilter().equals(FileManager.TSV)) {
                 // load from tsv
                 try {
                     setActiveInventory(manager.loadInventoryFromTSV(selected));
-                } catch (FileNotFoundException e) {
-                    displayAlertMessage("Unable to load from TSV file.");
+                } catch (Exception e) {
+                    displayAlertMessage("Unable to load from " + selected.toPath());
                 }
 
             } else if (fileChooser.getSelectedExtensionFilter().equals(FileManager.HTML)) {
@@ -267,6 +234,42 @@ public class FXMLController implements Initializable {
 
         // update our counter
         updateCounter();
+        initializeSearch();
+    }
+
+    public void initializeSearch() {
+        // this will initialize our search method, useful for initial load of list
+        // display all the data in the original filtered data
+        // found in tutorial
+
+        FilteredList<Item> filteredData = new FilteredList<>(data, b -> true);
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) ->
+                filteredData.setPredicate(item -> {
+
+                    // If filter text is empty, display all items.
+                    if (newValue == null || newValue.isEmpty()) {
+                        return true;
+                    }
+
+                    String lowerCaseFilter = newValue.toLowerCase();
+
+                    // Does not match.
+                    if (item.getName().toLowerCase().contains(lowerCaseFilter)) {
+                        return true; // Filter matches name.
+                    }
+                    else return item.getSerial().toLowerCase().contains(lowerCaseFilter);
+                }));
+
+        // Wrap the FilteredList in a SortedList.
+        SortedList<Item> sortedData = new SortedList<>(filteredData);
+
+        // Bind the SortedList comparator to the TableView comparator.
+        // Otherwise, sorting the TableView would have no effect.
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+
+        // Add sorted (and filtered) data to the table.
+        table.setItems(sortedData);
     }
 
     private void initializeEditing() {
@@ -375,7 +378,5 @@ public class FXMLController implements Initializable {
         data = inventory.getInventoryList();
         table.setItems(data);
     }
-
-
 }
 

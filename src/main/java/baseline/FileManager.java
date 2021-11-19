@@ -8,6 +8,10 @@ package baseline;
 import javafx.stage.FileChooser;
 import models.Inventory;
 import models.Item;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -43,7 +47,7 @@ public class FileManager {
         }
     }
 
-    public Inventory loadInventoryFromTSV(File file) throws InvalidParameterException, FileNotFoundException {
+    public Inventory loadInventoryFromTSV(File file) throws Exception {
         // takes in the file
         // if invalid, throw exception
 
@@ -51,6 +55,8 @@ public class FileManager {
         try (Scanner input = new Scanner(file)) {
             inventory = new Inventory();
             input.useDelimiter("[\t\n]");
+
+            // for the header...
             input.nextLine();
 
             // parses file, examining the items in the line
@@ -81,14 +87,92 @@ public class FileManager {
 
     public void saveInventoryToHTML(Inventory inventory, File file) throws IOException {
         // format as html with basic wrap
+        StringBuilder fileBuilder = new StringBuilder();
+
+        // open table header
+
+        fileBuilder.append("<!DOCTYPE html\n\n>");
+        fileBuilder.append("<html>\n");
+        fileBuilder.append("<body>\n");
+
+        fileBuilder.append("<table>\n");
+
+        // get the observable list
+        // for each of the items, format a table with
+        // A-XXX-XXX-XXX    Xbox    $1499.00
+
+        // table header row
+        fileBuilder.append("<tr>\n<th>Serial Number</th>\n<th>Name</th>\n<th>Value</th>\n</tr>");
+
         // go item by item, adding them to a String for HTML table
+        for (Item item : inventory.getInventoryList()) {
+            fileBuilder.append(getTableRowFormatted(item));
+        }
+
+
+        // close table header
+        fileBuilder.append("\n</table>\n");
+        fileBuilder.append("</body>\n");
+        fileBuilder.append("</html>\n");
+
+
+        Path p = file.toPath();
         // go to location and save the HTML
+        try {
+            Files.writeString(p, fileBuilder.toString());
+        } catch (Exception e) {
+            throw new IOException();
+        }
+
+    }
+
+    private String getTableRowFormatted(Item item) {
+        StringBuilder row = new StringBuilder();
+
+        row.append("<tr>\n");
+
+        row.append(getTableDataFormatted(item.getSerial()));
+        row.append(getTableDataFormatted(item.getName()));
+        row.append(getTableDataFormatted(item.getValueFormatted()));
+
+        row.append("</tr>\n");
+
+        return row.toString();
+    }
+
+    private String getTableDataFormatted(String data) {
+        return "<td>\n" + data + "\n</td>\n";
     }
 
     public Inventory loadInventoryFromHTML(File file) throws InvalidParameterException {
-        // go to the location the user specified and load as HTML
+        // go to the location the user specified and get the content as a string
+        Inventory inventory = new Inventory();
+
+        String content;
+
+        try {
+            content = Files.readString(file.toPath());
+        } catch (IOException e) {
+            throw new InvalidParameterException();
+        }
+
+        Document doc = Jsoup.parse(content);
+
+        // .next() will skip the header row
+        Elements rows = doc.getElementsByTag("tr").next();
+
+
         // parse through the HTML table, adding items to an Inventory
+        for (Element row : rows) {
+            String serial = row.getElementsByTag("td").get(0).text();
+            String name = row.getElementsByTag("td").get(1).text();
+            String value = row.getElementsByTag("td").get(2).text();
+
+            Item item = new Item(name, serial, value);
+            inventory.addItem(item);
+        }
+
         // return the inventory
-        return null;
+        return inventory;
     }
 }
