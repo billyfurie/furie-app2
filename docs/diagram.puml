@@ -2,37 +2,43 @@
 'https://plantuml.com/class-diagram
 
 class FileManager {
+    + static final FileChooser.ExtensionFilter TSV = new FileChooser.ExtensionFilter("TSV", "*.txt")
+    + static final FileChooser.ExtensionFilter HTML = new FileChooser.ExtensionFilter("HTML", "*.html")
+    + static final FileChooser.ExtensionFilter JSON = new FileChooser.ExtensionFilter("JSON", "*.json")
+
     +void saveInventoryToTSV(Inventory inventory, File file) throws IOException
     +Inventory loadInventoryFromTSV(File file) throws InvalidParameterException
     +void saveInventoryToJSON(Inventory inventory, File file) throws IOException
     +Inventory loadInventoryFromJSON(File file) throws InvalidParameterException
+    -String getInventoryFileAsString(File file) throws InvalidParameterException
     +void saveInventoryToHTML(Inventory inventory, File file) throws IOException
+    -String getTableRowFormatted(Item item)
+    -String getTableDataFormatted(String data)
     +Inventory loadInventoryFromHTML(File file) throws InvalidParameterException
 }
 
 class FXMLController {
     -TableView<Item> table
+    -BorderPane mainPane
+
     -TableColumn<Item, String> nameCol
     -TableColumn<Item, String> idCol
     -TableColumn<Item, String> valueCol
 
-    -Button addItemButton
-
     -TextField searchField
+    -TextField enterNameField
+    -TextField enterSerialField
+    -TextField enterValueField
 
-    -MenuItem createInventoryMenuItem
-    -MenuItem saveInventoryMenuItem
-    -MenuItem loadInventoryMenuItem
-
-    -MenuItem removeSelectedMenuItem
-    -MenuItem removeAllMenuItem
+    -Label alertMessageLabel
+    -Label itemCountLabel
 
     -ObservableList<Item> data
     -Inventory inventory
 
     +void initialize(URL location, ResourceBundle resources)
     +void addItem()
-    +void clearTextField(TextField field)
+    +void clearTextField(TextField... fields)
     +void removeSelectedItems()
     +void removeAllItems()
     +void displayAlertMessage(String message)
@@ -40,6 +46,12 @@ class FXMLController {
     +void createNewInventory()
     +void saveInventory()
     +void loadInventory()
+    +SortedList<Item> getSearchData(ObservableList<Item> observableList, StringProperty stringProperty)
+    -void initializeEditing()
+    -void initializeMainPane()
+    -void initializeEditorFields()
+    -void updateCounter()
+    -void setActiveInventory(Inventory inventory)
 }
 
 class InventoryManagementApplication {
@@ -48,28 +60,29 @@ class InventoryManagementApplication {
 }
 
 class DuplicateSerialException {
-
+    +DuplicateSerialException(String duplicateSerialMessage)
 }
 
 class InvalidNameException {
-
+    +InvalidNameException(String invalidNameMessage)
 }
 
 class InvalidSerialException {
-
+    +InvalidSerialException(String invalidSerialMessage)
 }
 
 class InvalidValueException {
-
+    +InvalidValueException(String invalidValueMessage)
 }
 
 class InventoryFullException {
-
+    +InventoryFullException(String inventoryFullMessage)
 }
 
 class Inventory {
     -static final int CAPACITY_INCLUSIVE = 1024
-    -ObservableList<Item> inventory
+    -static final String INVENTORY_FULL_MESSAGE = "Error: the inventory is full at 1024 items."
+    -final ObservableList<Item> inventory
     +Inventory()
     +void addItem(String name, String serial, double value) throws InvalidParameterException
     +void addItem(Item item) throws InvalidParameterException
@@ -77,21 +90,31 @@ class Inventory {
     +void removeItem(ObservableList<Item> items)
     +void removeAllItems()
     +ObservableList<Item> getInventory()
+    +String getCounterString()
 }
 
 class Item {
     -static final int MIN_CHAR_COUNT_NAME = 2
     -static final int MAX_CHAR_COUNT_NAME = 256
-    -static final String SERIAL_FORMAT = "A-XXX-XXX-XXX"
+    -static final String SERIAL_FORMAT = "[A-Z]-[A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{3}";
     -static HashMap<String, Boolean> serialMap
+    -static final String INVALID_NAME_MESSAGE = "Error: enter a name that is 2-256 characters."
+    -static final String INVALID_SERIAL_MESSAGE = "Error: enter a serial in form A-XXX-XXX-XXX. " + "A is a letter; X is a letter or digit."
+    -static final String INVALID_VALUE_MESSAGE = "Error: enter a numeric value >= 0."
+    -static final String DUPLICATE_SERIAL_MESSAGE = "Error: the serial number you are trying to use is already " + "in use."
+    -boolean initialSerialization = true
     -SimpleStringProperty name
     -SimpleStringProperty serial
     -SimpleDoubleProperty value
+    -SimpleStringProperty valueFormatted
+
+
     -Item(String name, String serial, double value) throws InvalidParameterException
+    -void initProperties(String name, String serial, String value)
     +String getName()
     +String getSerial()
     +double getValue()
-    +String getValueString()
+    +String getValueFormatted()
     +void setName(String name) throws InvalidNameException
     +void setSerial(String serial) throws InvalidParameterException
     +void setValue(double value) throws InvalidValueException
@@ -99,8 +122,19 @@ class Item {
     +boolean isSerialValid(String serial)
     +boolean isSerialDuplicate(String serial)
     +boolean isValueValid(double value)
+    -void removeSerial(String ... serials)
     +String toStringTSV()
-    +String toString()
+    +ItemLight getAsItemLight()
+}
+
+class ItemLight {
+    -final String name
+    -final String serial
+    -final String value
+    +ItemLight(String name, String serial, String value)
+    +String getName()
+    +String getSerial()
+    +String getValue()
 }
 
 FXMLController *-- Inventory: contains 1
@@ -108,7 +142,8 @@ FXMLController .. FileManager: uses
 InventoryManagementApplication .. FXMLController
 Inventory *-- Item: contains ObservableList of
 
-
+FileManager .. ItemLight: uses
+Item .. ItemLight: Lightweight version
 Item .. DuplicateSerialException: throws
 Item .. InvalidNameException: throws
 Item .. InvalidSerialException: throws

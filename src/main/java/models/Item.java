@@ -183,12 +183,6 @@ public class Item {
         return String.format("%s\t%s\t%s%n", serial.getValue(), name.getValue(), valueFormatted.getValue());
     }
 
-    @Override
-    public String toString() {
-        // override the default method to include a toString that we could use
-        return "";
-    }
-
     public ItemLight getAsItemLight() {
         return new ItemLight(getName(), getSerial(), getValueFormatted());
     }
