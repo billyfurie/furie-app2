@@ -38,7 +38,7 @@
                         </Menu>
                     </menus>
                 </MenuBar>
-                <Label fx:id="itemCountLabel" maxHeight="1.7976931348623157E308" styleClass="itemCountLabel" stylesheets="@styles.css" text="0 / 1024">
+                <Label fx:id="itemCountLabel" maxHeight="1.7976931348623157E308" styleClass="itemCountLabel" stylesheets="@styles.css" text="0 / 1024" textFill="#5e5e5e">
                     <padding>
                         <Insets right="16.0" />
                     </padding>

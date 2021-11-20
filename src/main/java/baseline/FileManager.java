@@ -5,9 +5,12 @@
 
 package baseline;
 
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import javafx.stage.FileChooser;
 import models.Inventory;
 import models.Item;
+import models.ItemLight;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,6 +20,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class FileManager {
@@ -47,7 +51,7 @@ public class FileManager {
         }
     }
 
-    public Inventory loadInventoryFromTSV(File file) throws Exception {
+    public Inventory loadInventoryFromTSV(File file) throws IOException {
         // takes in the file
         // if invalid, throw exception
 
@@ -75,14 +79,55 @@ public class FileManager {
 
     public void saveInventoryToJSON(Inventory inventory, File file) throws IOException {
         // use GSON to save the file
+        ArrayList<ItemLight> list = new ArrayList<>();
+
+        for (Item i : inventory.getInventoryList()) {
+            list.add(i.getAsItemLight());
+        }
+
         // go to the location the user specified and save as JSON
+        try (Writer writer = new FileWriter(file)) {
+            Gson gson = new GsonBuilder().create();
+            gson.toJson(list, writer);
+        } catch (JsonIOException e) {
+            throw new IOException();
+        }
     }
 
     public Inventory loadInventoryFromJSON(File file) throws InvalidParameterException {
         // use GSON to load the file
-        // go to the location the user specified and load as JSON
-        // if invalid, throw exception
-        return null;
+        Gson gson = new Gson();
+        // go to the location the user specified and load as String
+        String json = getInventoryFileAsString(file);
+
+        Inventory inventory = new Inventory();
+
+        ArrayList<ItemLight> list;
+
+        // parse the json String
+        try {
+            list = gson.fromJson(json, new TypeToken<ArrayList<ItemLight>>(){}.getType());
+        } catch (Exception e) {
+            throw new InvalidParameterException();
+        }
+
+        for (ItemLight i : list) {
+            // if invalid, throw exception
+            inventory.addItem(new Item(i.getName(), i.getSerial(), i.getValue()));
+        }
+
+        return inventory;
+    }
+
+    private String getInventoryFileAsString(File file) throws InvalidParameterException {
+        // return the text of the inventory file
+        try {
+            JsonElement fileElement = JsonParser.parseReader(new FileReader(file));
+            return fileElement.toString();
+
+        } catch (FileNotFoundException e) {
+            throw new InvalidParameterException();
+        }
     }
 
     public void saveInventoryToHTML(Inventory inventory, File file) throws IOException {
@@ -127,17 +172,15 @@ public class FileManager {
     }
 
     private String getTableRowFormatted(Item item) {
-        StringBuilder row = new StringBuilder();
+        String row = "<tr>\n";
 
-        row.append("<tr>\n");
+        row += getTableDataFormatted(item.getSerial());
+        row += getTableDataFormatted(item.getName());
+        row += getTableDataFormatted(item.getValueFormatted());
 
-        row.append(getTableDataFormatted(item.getSerial()));
-        row.append(getTableDataFormatted(item.getName()));
-        row.append(getTableDataFormatted(item.getValueFormatted()));
+        row += "</tr>\n";
 
-        row.append("</tr>\n");
-
-        return row.toString();
+        return row;
     }
 
     private String getTableDataFormatted(String data) {

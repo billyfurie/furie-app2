@@ -188,4 +188,8 @@ public class Item {
         // override the default method to include a toString that we could use
         return "";
     }
+
+    public ItemLight getAsItemLight() {
+        return new ItemLight(getName(), getSerial(), getValueFormatted());
+    }
 }
