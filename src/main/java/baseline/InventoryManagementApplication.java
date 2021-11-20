@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class InventoryManagementApplication extends Application {
@@ -18,6 +19,7 @@ public class InventoryManagementApplication extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("scene.fxml"));
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
 
         stage.setTitle("Inventory Manager");
         stage.setScene(scene);

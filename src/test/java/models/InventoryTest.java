@@ -48,7 +48,6 @@ class InventoryTest {
             }
 
             String serial = String.format("%c-%s-%s-123", letter, block1, block2);
-            System.out.println(serial);
             inventory.addItem("Item", serial, "100");
         }
 
@@ -66,7 +65,6 @@ class InventoryTest {
             }
 
             String serial = String.format("%c-%s-%s-123", letter, block1, block2);
-            System.out.println(serial);
             inventory.addItem("Item", serial, "100");
         }
 
