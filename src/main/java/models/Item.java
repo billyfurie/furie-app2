@@ -155,24 +155,24 @@ public class Item {
         this.valueFormatted = new SimpleStringProperty(getValueFormatted());
     }
 
-    public boolean isNameValid(String name) {
+    public static boolean isNameValid(String name) {
         // return whether the name is 2-256 characters (inclusive)
         int length = name.length();
         return length >= MIN_CHAR_COUNT_NAME && length <= MAX_CHAR_COUNT_NAME;
     }
 
-    public boolean isSerialValid(String serial) {
+    public static boolean isSerialValid(String serial) {
         // return whether the serial is in the format A-XXX-XXX-XXX
         // where A is a letter, and X is a letter or digit
         return serial.matches(SERIAL_FORMAT);
     }
 
-    public boolean isSerialDuplicate(String serial) {
+    public static boolean isSerialDuplicate(String serial) {
         // return whether the serial is a duplicate (from map)
         return serialMap.containsKey(serial) && Boolean.TRUE.equals(serialMap.get(serial));
     }
 
-    public boolean isValueValid(double value) {
+    public static boolean isValueValid(double value) {
         // return whether the value is >= 0
         return value >= 0;
     }

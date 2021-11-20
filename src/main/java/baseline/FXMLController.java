@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 
 import exceptions.InvalidNameException;
 import javafx.animation.PauseTransition;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -242,9 +243,24 @@ public class FXMLController implements Initializable {
         // display all the data in the original filtered data
         // found in tutorial
 
-        FilteredList<Item> filteredData = new FilteredList<>(data, b -> true);
+        // Wrap the FilteredList in a SortedList.
+        SortedList<Item> sortedData = getSearchData(data, searchField.textProperty());
 
-        searchField.textProperty().addListener((observable, oldValue, newValue) ->
+        // Add sorted (and filtered) data to the table.
+
+        // Bind the SortedList comparator to the TableView comparator.
+        // Otherwise, sorting the TableView would have no effect.
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+
+        table.setItems(sortedData);
+    }
+
+    public SortedList<Item> getSearchData(ObservableList<Item> observableList, StringProperty stringProperty) {
+
+        // Wrap
+        FilteredList<Item> filteredData = new FilteredList<>(observableList, b -> true);
+
+        stringProperty.addListener((observable, oldValue, newValue) ->
                 filteredData.setPredicate(item -> {
 
                     // If filter text is empty, display all items.
@@ -262,14 +278,7 @@ public class FXMLController implements Initializable {
                 }));
 
         // Wrap the FilteredList in a SortedList.
-        SortedList<Item> sortedData = new SortedList<>(filteredData);
-
-        // Bind the SortedList comparator to the TableView comparator.
-        // Otherwise, sorting the TableView would have no effect.
-        sortedData.comparatorProperty().bind(table.comparatorProperty());
-
-        // Add sorted (and filtered) data to the table.
-        table.setItems(sortedData);
+        return new SortedList<>(filteredData);
     }
 
     private void initializeEditing() {

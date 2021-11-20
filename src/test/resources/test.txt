@@ -1,0 +1,4 @@
+Serial Number	Name	Value
+A-AAA-AAA-AAA	Item1	$1,111,141.00
+A-BBB-AAA-AAA	Item2	$123.00
+A-AAA-BBB-AAA	Item3	$88,888,888,888.00
